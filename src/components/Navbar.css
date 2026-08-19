@@ -1,0 +1,178 @@
+.navbar {
+  width: 100%;
+
+  min-height: 76px;
+
+  padding: 0 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: #20252b;
+
+  border-bottom: 1px solid #343b43;
+
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.25);
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.navbar-logo {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #fefefe;
+
+  border-radius: 12px;
+
+  font-size: 24px;
+
+  box-shadow:
+    0 5px 18px rgba(33, 150, 243, 0.25);
+}
+
+.navbar-left h2 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.5px;
+}
+
+.navbar-left span {
+  display: block;
+
+  margin-top: 3px;
+
+  color: #89939e;
+
+  font-size: 12px;
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
+
+.navbar-user {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+}
+
+.user-avatar {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #2196f3;
+
+  color: white;
+
+  font-weight: 700;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.user-info strong {
+  color: #ffffff;
+
+  font-size: 13px;
+
+  max-width: 220px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+.user-info span {
+  color: #89939e;
+
+  font-size: 11px;
+}
+
+.logout-button {
+  height: 38px;
+
+  padding: 0 16px;
+
+  border: 1px solid #414952;
+
+  border-radius: 7px;
+
+  background: #292f35;
+
+  color: #d9dee3;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.2s;
+}
+
+.logout-button:hover {
+  background: #e53935;
+
+  border-color: #e53935;
+
+  color: white;
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .navbar-left h2 {
+    font-size: 14px;
+  }
+
+  .navbar-left span {
+    display: none;
+  }
+
+  .user-info {
+    display: none;
+  }
+
+  .navbar-right {
+    gap: 10px;
+  }
+}

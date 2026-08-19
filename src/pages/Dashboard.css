@@ -1,0 +1,1202 @@
+/* =========================================================
+   DASHBOARD PAGE
+========================================================= */
+
+.dashboard-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(255, 255, 255, 0.05),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #080b0f 0%,
+      #0d1117 48%,
+      #11161d 100%
+    );
+  color: #f4f7fa;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.dashboard-page *,
+.dashboard-page *::before,
+.dashboard-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   MAIN CONTAINER
+========================================================= */
+
+.dashboard-container {
+  width: min(1500px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 42px 0 80px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.dashboard-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 34px;
+}
+
+.dashboard-heading {
+  min-width: 0;
+}
+
+.dashboard-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  color: #ff3b30;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.dashboard-label::before {
+  content: "";
+  width: 26px;
+  height: 2px;
+  background: #ff3b30;
+  border-radius: 999px;
+}
+
+.dashboard-heading h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 0.98;
+  font-weight: 900;
+  letter-spacing: -0.045em;
+}
+
+.dashboard-heading h1 span {
+  color: #ff3b30;
+}
+
+.dashboard-description {
+  max-width: 650px;
+  margin: 18px 0 0;
+  color: #8993a0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   BIKE COUNT
+========================================================= */
+
+.bike-count {
+  flex: 0 0 auto;
+  min-width: 145px;
+  padding: 18px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  text-align: center;
+}
+
+.bike-count strong {
+  display: block;
+  color: #ffffff;
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.bike-count span {
+  display: block;
+  margin-top: 8px;
+  color: #8b95a3;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.dashboard-error {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding: 18px 20px;
+  border: 1px solid rgba(255, 59, 48, 0.25);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 59, 48, 0.1),
+      rgba(255, 59, 48, 0.025)
+    );
+}
+
+.dashboard-error .error-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  border-radius: 12px;
+  background: rgba(255, 59, 48, 0.14);
+  color: #ff5b52;
+  font-size: 18px;
+  font-weight: 900;
+}
+
+.dashboard-error .error-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.dashboard-error strong {
+  display: block;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.dashboard-error p {
+  margin: 4px 0 0;
+  color: #9b6570;
+  font-size: 13px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.dashboard-error button {
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: rgba(255, 59, 48, 0.1);
+  color: #ff6259;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-error button:hover {
+  background: #ff3b30;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.dashboard-search {
+  margin-bottom: 34px;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 58px;
+  padding: 0 17px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.035);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 15px 40px rgba(0, 0, 0, 0.12);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-box:focus-within {
+  border-color: rgba(255, 59, 48, 0.45);
+  background: rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 0 0 3px rgba(255, 59, 48, 0.07),
+    0 15px 40px rgba(0, 0, 0, 0.16);
+}
+
+.search-icon {
+  flex: 0 0 auto;
+  color: #ff4b40;
+  font-size: 18px;
+}
+
+.search-box input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.search-box input::placeholder {
+  color: #65707d;
+}
+
+.search-box > button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #9da6b2;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.search-box > button:hover {
+  background: rgba(255, 59, 48, 0.15);
+  color: #ff5b52;
+}
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.section-title {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.section-kicker {
+  display: block;
+  margin-bottom: 7px;
+  color: #ff493f;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.section-title h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 25px;
+  line-height: 1.15;
+  font-weight: 850;
+  letter-spacing: -0.025em;
+}
+
+.section-title p {
+  margin: 7px 0 0;
+  color: #737e8b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.data-count {
+  flex: 0 0 auto;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #8b96a3;
+  font-size: 11px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BIKE SELECTOR
+========================================================= */
+
+.bike-selector {
+  margin-bottom: 48px;
+}
+
+.bike-list {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(250px, 1fr)
+  );
+  gap: 12px;
+}
+
+/* =========================================================
+   BIKE CARD
+========================================================= */
+
+.bike-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  min-height: 94px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 15px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+  color: #ffffff;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    border-color 0.22s ease,
+    background 0.22s ease,
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.bike-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      120deg,
+      rgba(255, 59, 48, 0.07),
+      transparent 45%
+    );
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+
+.bike-card:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.065),
+      rgba(255, 255, 255, 0.025)
+    );
+  transform: translateY(-2px);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.2);
+}
+
+.bike-card:hover::before {
+  opacity: 1;
+}
+
+.bike-card.active {
+  border-color: rgba(255, 59, 48, 0.55);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 59, 48, 0.13),
+      rgba(255, 255, 255, 0.035)
+    );
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(255, 59, 48, 0.05);
+}
+
+.bike-card.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 0 4px 4px 0;
+  background: #ff3b30;
+}
+
+/* =========================================================
+   BIKE CARD NUMBER
+========================================================= */
+
+.bike-card-number {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  margin-right: 12px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.055);
+  color: #c2c9d1;
+  font-size: 12px;
+  font-weight: 850;
+  overflow: hidden;
+}
+
+.bike-card.active .bike-card-number {
+  background: rgba(255, 59, 48, 0.14);
+  color: #ff5c53;
+}
+
+/* =========================================================
+   BIKE CARD INFO
+========================================================= */
+
+.bike-card-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.bike-card-info strong {
+  display: block;
+  overflow: hidden;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bike-card-info > span {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: #78838f;
+  font-size: 11px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BIKE STATUS BADGE
+========================================================= */
+
+.bike-status-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 8px;
+  padding: 4px 7px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #8d98a5;
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   STATUS COLORS
+========================================================= */
+
+.status-roadworthy,
+.status-aktif {
+  border-color: rgba(54, 211, 153, 0.22) !important;
+  background: rgba(54, 211, 153, 0.09) !important;
+  color: #52dca7 !important;
+}
+
+.status-maintenance {
+  border-color: rgba(255, 184, 77, 0.25) !important;
+  background: rgba(255, 184, 77, 0.09) !important;
+  color: #ffc266 !important;
+}
+
+.status-nonaktif,
+.status-non_aktif {
+  border-color: rgba(255, 91, 82, 0.25) !important;
+  background: rgba(255, 91, 82, 0.09) !important;
+  color: #ff756d !important;
+}
+
+.status-terpasang {
+  border-color: rgba(75, 145, 255, 0.25) !important;
+  background: rgba(75, 145, 255, 0.09) !important;
+  color: #78aaff !important;
+}
+
+.status-terlepas {
+  border-color: rgba(255, 184, 77, 0.22) !important;
+  background: rgba(255, 184, 77, 0.08) !important;
+  color: #ffc266 !important;
+}
+
+.status-baik {
+  border-color: rgba(54, 211, 153, 0.22) !important;
+  background: rgba(54, 211, 153, 0.09) !important;
+  color: #52dca7 !important;
+}
+
+.status-rusak {
+  border-color: rgba(255, 59, 48, 0.25) !important;
+  background: rgba(255, 59, 48, 0.09) !important;
+  color: #ff756d !important;
+}
+
+.status-perlu_inspeksi {
+  border-color: rgba(255, 184, 77, 0.25) !important;
+  background: rgba(255, 184, 77, 0.09) !important;
+  color: #ffc266 !important;
+}
+
+/* =========================================================
+   BIKE CARD COMPONENT COUNT
+========================================================= */
+
+.bike-card-component-count {
+  flex: 0 0 auto;
+  margin-left: 10px;
+  color: #596471;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   BIKE CARD ARROW
+========================================================= */
+
+.bike-card-arrow {
+  flex: 0 0 auto;
+  margin-left: 12px;
+  color: #596471;
+  font-size: 18px;
+  line-height: 1;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.bike-card:hover .bike-card-arrow {
+  color: #ff5148;
+  transform: translateX(3px);
+}
+
+.bike-card.active .bike-card-arrow {
+  color: #ff5148;
+}
+
+/* =========================================================
+   BIKE DETAIL
+========================================================= */
+
+.bike-detail {
+  position: relative;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.075);
+  border-radius: 22px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.045),
+      rgba(255, 255, 255, 0.018)
+    );
+  box-shadow:
+    0 30px 80px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+/* =========================================================
+   DETAIL HEADER
+========================================================= */
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 25px;
+  padding-bottom: 26px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.detail-heading {
+  min-width: 0;
+}
+
+.detail-label {
+  display: inline-block;
+  margin-bottom: 9px;
+  color: #ff4a40;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.detail-heading h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(26px, 4vw, 42px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+
+.detail-heading p {
+  margin: 11px 0 0;
+  color: #737e8b;
+  font-size: 13px;
+}
+
+.detail-heading p strong {
+  color: #c8ced6;
+  font-weight: 800;
+}
+
+.detail-header-right {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.detail-id {
+  color: #596471;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.bike-detail-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   BIKE META GRID
+========================================================= */
+
+.bike-meta-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+.bike-meta-item {
+  min-width: 0;
+  padding: 15px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.13);
+}
+
+.bike-meta-item > span {
+  display: block;
+  margin-bottom: 7px;
+  color: #596471;
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.bike-meta-item > strong {
+  display: block;
+  overflow: hidden;
+  color: #dfe4ea;
+  font-size: 13px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bike-meta-item .meta-status {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  font-size: 9px;
+  font-weight: 900;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* =========================================================
+   COMPONENT SECTION
+========================================================= */
+
+.component-section {
+  min-width: 0;
+}
+
+.component-section .section-title {
+  margin-bottom: 22px;
+}
+
+/* =========================================================
+   COMPONENT GRID
+========================================================= */
+
+.component-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  align-items: stretch;
+}
+
+.component-grid > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* =========================================================
+   COMPONENT EMPTY CARD
+========================================================= */
+
+.component-card.empty {
+  position: relative;
+  min-height: 260px;
+  padding: 16px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0.012)
+    );
+  overflow: hidden;
+}
+
+.component-card.empty .component-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.component-card.empty .component-type {
+  color: #717c88;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.no-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 190px;
+  gap: 10px;
+  color: #555f6b;
+  text-align: center;
+  font-size: 11px;
+}
+
+.empty-icon {
+  display: grid;
+  place-items: center;
+  width: 45px;
+  height: 45px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  color: #4f5965;
+  font-size: 20px;
+}
+
+/* =========================================================
+   EMPTY DASHBOARD
+========================================================= */
+
+.empty-dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 40px;
+  border: 1px dashed rgba(255, 255, 255, 0.09);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.018);
+  text-align: center;
+}
+
+.empty-dashboard-icon {
+  display: grid;
+  place-items: center;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 18px;
+  border-radius: 18px;
+  background: rgba(255, 59, 48, 0.08);
+  font-size: 28px;
+}
+
+.empty-dashboard h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 21px;
+  font-weight: 850;
+}
+
+.empty-dashboard p {
+  max-width: 450px;
+  margin: 9px 0 20px;
+  color: #6d7885;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.empty-dashboard button {
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 10px;
+  padding: 10px 17px;
+  background: rgba(255, 59, 48, 0.08);
+  color: #ff6258;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.empty-dashboard button:hover {
+  background: #ff3b30;
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.dashboard-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 65vh;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.08);
+  border-top-color: #ff3b30;
+  border-radius: 50%;
+  animation:
+    dashboard-spin 0.8s linear infinite;
+}
+
+.dashboard-loading h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.dashboard-loading p {
+  margin: 8px 0 0;
+  color: #68737f;
+  font-size: 13px;
+}
+
+@keyframes dashboard-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.bike-card:focus-visible,
+.search-box button:focus-visible,
+.dashboard-error button:focus-visible,
+.empty-dashboard button:focus-visible {
+  outline: 2px solid #ff4a40;
+  outline-offset: 3px;
+}
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+  .dashboard-container {
+    width: min(100% - 36px, 1200px);
+  }
+
+  .component-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+  .bike-meta-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* =========================================================
+   TABLET SMALL
+========================================================= */
+
+@media (max-width: 900px) {
+  .dashboard-container {
+    padding-top: 30px;
+    padding-bottom: 60px;
+  }
+
+  .dashboard-header {
+    align-items: flex-start;
+  }
+
+  .bike-count {
+    min-width: 125px;
+  }
+
+  .bike-list {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .component-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .bike-meta-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+
+  .bike-detail {
+    padding: 22px;
+  }
+}
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+  .dashboard-container {
+    width: calc(100% - 24px);
+    padding-top: 24px;
+    padding-bottom: 45px;
+  }
+
+  .dashboard-header {
+    display: block;
+    margin-bottom: 25px;
+  }
+
+  .dashboard-heading h1 {
+    font-size: 38px;
+  }
+
+  .dashboard-description {
+    margin-top: 13px;
+    font-size: 13px;
+  }
+
+  .bike-count {
+    display: inline-block;
+    min-width: 120px;
+    margin-top: 20px;
+    padding: 14px 18px;
+    text-align: left;
+  }
+
+  .bike-count strong {
+    font-size: 28px;
+  }
+
+  .dashboard-error {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .dashboard-error button {
+    width: 100%;
+  }
+
+  .dashboard-search {
+    margin-bottom: 27px;
+  }
+
+  .search-box {
+    min-height: 52px;
+  }
+
+  .section-title {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .section-title h2 {
+    font-size: 22px;
+  }
+
+  .data-count {
+    align-self: flex-start;
+  }
+
+  .bike-list {
+    grid-template-columns: 1fr;
+  }
+
+  .bike-card {
+    min-height: 88px;
+  }
+
+  .bike-card-component-count {
+    display: none;
+  }
+
+  .bike-card-arrow {
+    margin-left: 8px;
+  }
+
+  .bike-detail {
+    padding: 17px;
+    border-radius: 17px;
+  }
+
+  .detail-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 20px;
+  }
+
+  .detail-heading h2 {
+    font-size: 29px;
+  }
+
+  .detail-header-right {
+    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .bike-meta-grid {
+    grid-template-columns: 1fr;
+    margin-bottom: 30px;
+  }
+
+  .component-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .component-card.empty {
+    min-height: 190px;
+  }
+
+  .no-component {
+    min-height: 120px;
+  }
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+  .dashboard-container {
+    width: calc(100% - 18px);
+  }
+
+  .dashboard-heading h1 {
+    font-size: 34px;
+  }
+
+  .bike-detail {
+    padding: 14px;
+  }
+
+  .bike-card {
+    padding: 12px;
+  }
+
+  .bike-card-number {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+    margin-right: 9px;
+  }
+
+  .bike-card-info strong {
+    font-size: 13px;
+  }
+
+  .bike-card-info > span {
+    font-size: 10px;
+  }
+
+  .detail-heading h2 {
+    font-size: 26px;
+  }
+}
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .bike-card,
+  .bike-card::before,
+  .bike-card-arrow,
+  .search-box,
+  .dashboard-error button,
+  .empty-dashboard button {
+    transition: none;
+  }
+
+  .loading-spinner {
+    animation: none;
+  }
+}
