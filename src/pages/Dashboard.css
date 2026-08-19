@@ -1200,3 +1200,115 @@
     animation: none;
   }
 }
+/* ============================================================
+   REGISTER SUCCESS MESSAGE
+============================================================ */
+
+.register-success {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+
+  width: 100%;
+  margin-top: 18px;
+  padding: 16px 18px;
+
+  border: 1px solid rgba(54, 211, 153, 0.22);
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(54, 211, 153, 0.10),
+      rgba(54, 211, 153, 0.035)
+    );
+
+  box-shadow:
+    0 12px 35px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.025);
+
+  animation: register-success-in 0.25s ease-out;
+}
+
+.register-success-icon {
+  display: grid;
+  place-items: center;
+
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  border: 1px solid rgba(54, 211, 153, 0.25);
+  border-radius: 10px;
+
+  background: rgba(54, 211, 153, 0.12);
+
+  color: #52dca7;
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.register-success-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.register-success-content h3 {
+  margin: 0;
+
+  color: #ffffff;
+
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1.3;
+}
+
+.register-success-content p {
+  margin: 5px 0 0;
+
+  color: #8d9a96;
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+@keyframes register-success-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   MOBILE
+============================================================ */
+
+@media (max-width: 500px) {
+  .register-success {
+    gap: 11px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .register-success-icon {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+    font-size: 15px;
+  }
+
+  .register-success-content h3 {
+    font-size: 13px;
+  }
+
+  .register-success-content p {
+    font-size: 11px;
+    line-height: 1.55;
+  }
+}

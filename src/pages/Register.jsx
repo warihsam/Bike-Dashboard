@@ -33,56 +33,30 @@ function Register() {
       const cleanEmail = email.trim().toLowerCase();
 
       if (!cleanName) {
-        throw new Error(
-          "Nama lengkap wajib diisi."
-        );
+        throw new Error("Nama lengkap wajib diisi.");
       }
 
       if (!cleanEmail) {
-        throw new Error(
-          "Email wajib diisi."
-        );
+        throw new Error("Email wajib diisi.");
       }
 
       if (password.length < 6) {
-        throw new Error(
-          "Password minimal 6 karakter."
-        );
+        throw new Error("Password minimal 6 karakter.");
       }
 
       // ========================================================
       // REGISTER SUPABASE AUTH
       // ========================================================
 
-      console.log(
-        "========================================"
-      );
+      console.log("========================================");
+      console.log("REGISTER USER");
+      console.log("EMAIL:", cleanEmail);
+      console.log("NAMA:", cleanName);
+      console.log("========================================");
 
-      console.log(
-        "REGISTER USER"
-      );
-
-      console.log(
-        "EMAIL:",
-        cleanEmail
-      );
-
-      console.log(
-        "NAMA:",
-        cleanName
-      );
-
-      console.log(
-        "========================================"
-      );
-
-      const {
-        data: authData,
-        error: authError,
-      } = await supabase.auth.signUp({
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: cleanEmail,
         password: password,
-
         options: {
           data: {
             full_name: cleanName,
@@ -95,11 +69,7 @@ function Register() {
       // ========================================================
 
       if (authError) {
-        console.error(
-          "SUPABASE AUTH ERROR:",
-          authError
-        );
-
+        console.error("SUPABASE AUTH ERROR:", authError);
         throw authError;
       }
 
@@ -110,145 +80,56 @@ function Register() {
       const user = authData?.user;
 
       if (!user) {
-        throw new Error(
-          "Registrasi gagal. User tidak berhasil dibuat."
-        );
+        throw new Error("Registrasi gagal. User tidak berhasil dibuat.");
       }
 
-      console.log(
-        "AUTH USER BERHASIL:",
-        user
-      );
-
-      console.log(
-        "USER ID:",
-        user.id
-      );
-
-      console.log(
-        "USER EMAIL:",
-        user.email
-      );
+      console.log("AUTH USER BERHASIL:", user);
+      console.log("USER ID:", user.id);
+      console.log("USER EMAIL:", user.email);
 
       // ========================================================
       // SIMPAN PROFILE
       // ========================================================
 
-      /*
-       * Email disimpan secara eksplisit sebagai TEXT.
-       *
-       * profiles:
-       *
-       * id
-       * full_name
-       * email
-       * role
-       * status
-       */
-
       const profileData = {
         id: user.id,
-
         full_name: cleanName,
-
-        email: String(
-          cleanEmail
-        ),
-
+        email: String(cleanEmail),
         role: "user",
-
         status: "pending",
       };
 
-      console.log(
-        "PROFILE DATA:",
-        profileData
-      );
+      console.log("PROFILE DATA:", profileData);
 
-      const {
-        data: profileResult,
-        error: profileError,
-      } = await supabase
+      // Lakukan upsert tanpa memanggil .select().single() secara bersamaan 
+      // untuk menghindari kegagalan policy SELECT pada RLS
+      const { error: profileError } = await supabase
         .from("profiles")
-        .upsert(
-          profileData,
-          {
-            onConflict: "id",
-          }
-        )
-        .select()
-        .single();
+        .upsert(profileData, { onConflict: "id" });
 
       // ========================================================
       // PROFILE ERROR
       // ========================================================
 
       if (profileError) {
-        console.error(
-          "========================================"
-        );
-
-        console.error(
-          "PROFILE INSERT ERROR"
-        );
-
-        console.error(
-          profileError
-        );
-
-        console.error(
-          "========================================"
-        );
-
-        /*
-         * Auth sudah berhasil dibuat.
-         *
-         * Tetapi profiles gagal.
-         *
-         * Jangan menganggap registrasi berhasil penuh.
-         */
+        console.error("========================================");
+        console.error("PROFILE INSERT ERROR", profileError);
+        console.error("========================================");
 
         throw new Error(
-          `Akun Auth berhasil dibuat, tetapi data profiles gagal disimpan: ${profileError.message}`
+          `Gagal menyimpan profil pengguna: ${profileError.message}`
         );
       }
 
-      console.log(
-        "PROFILE BERHASIL DISIMPAN:",
-        profileResult
-      );
-
-      // ========================================================
-      // VERIFIKASI EMAIL DI PROFILES
-      // ========================================================
-
-      console.log(
-        "EMAIL PROFILES:",
-        profileResult?.email
-      );
+      console.log("PROFILE BERHASIL DISIMPAN");
 
       // ========================================================
       // JANGAN BIARKAN USER MASUK DASHBOARD
       // ========================================================
 
-      /*
-       * Kalau email confirmation OFF,
-       * Supabase bisa memberikan session.
-       *
-       * Kita tetap logout.
-       *
-       * User harus menunggu admin.
-       */
-
       if (authData?.session) {
-        console.log(
-          "SESSION TERBENTUK."
-        );
-
-        console.log(
-          "USER AKAN DI-LOGOUT KARENA MENUNGGU APPROVAL ADMIN."
-        );
-
+        console.log("SESSION TERBENTUK.");
+        console.log("USER AKAN DI-LOGOUT KARENA MENUNGGU APPROVAL ADMIN.");
         await supabase.auth.signOut();
       }
 
@@ -257,6 +138,8 @@ function Register() {
       // ========================================================
 
       setPassword("");
+      setFullName("");
+      setEmail("");
 
       // ========================================================
       // PESAN SUKSES
@@ -265,29 +148,14 @@ function Register() {
       setMessage(
         "Registrasi berhasil. Akun Anda sedang menunggu persetujuan admin. Silakan tunggu sampai akun disetujui sebelum login."
       );
-
     } catch (error) {
-      console.error(
-        "========================================"
-      );
-
-      console.error(
-        "REGISTER ERROR"
-      );
-
-      console.error(
-        error
-      );
-
-      console.error(
-        "========================================"
-      );
+      console.error("========================================");
+      console.error("REGISTER ERROR", error);
+      console.error("========================================");
 
       setErrorMessage(
-        error?.message ||
-          "Registrasi gagal. Silakan coba lagi."
+        error?.message || "Registrasi gagal. Silakan coba lagi."
       );
-
     } finally {
       setLoading(false);
     }
@@ -299,59 +167,34 @@ function Register() {
 
   return (
     <div className="auth-page">
-
       <div className="auth-card">
-
         {/* ======================================================
             LOGO
         ====================================================== */}
-
         <div className="auth-logo">
-
-          <img
-            src="/imagess.png"
-            alt="Auth Logo"
-          />
-
+          <img src="/imagess.png" alt="Auth Logo" />
         </div>
 
         {/* ======================================================
             TITLE
         ====================================================== */}
-
-        <h1>
-          Buat Akun
-        </h1>
-
-        <p className="subtitle">
-          Daftar untuk mengakses Bike Dashboard
-        </p>
+        <h1>Buat Akun</h1>
+        <p className="subtitle">Daftar untuk mengakses Bike Dashboard</p>
 
         {/* ======================================================
             FORM
         ====================================================== */}
-
-        <form
-          onSubmit={handleRegister}
-        >
-
+        <form onSubmit={handleRegister}>
           {/* ====================================================
               NAMA LENGKAP
           ==================================================== */}
-
-          <label>
-            Nama Lengkap
-          </label>
-
+          <label>Nama Lengkap</label>
           <input
             type="text"
             placeholder="Nama lengkap"
             value={fullName}
             onChange={(e) => {
-              setFullName(
-                e.target.value
-              );
-
+              setFullName(e.target.value);
               setErrorMessage("");
               setMessage("");
             }}
@@ -363,20 +206,13 @@ function Register() {
           {/* ====================================================
               EMAIL
           ==================================================== */}
-
-          <label>
-            Email
-          </label>
-
+          <label>Email</label>
           <input
             type="email"
             placeholder="email@example.com"
             value={email}
             onChange={(e) => {
-              setEmail(
-                e.target.value
-              );
-
+              setEmail(e.target.value);
               setErrorMessage("");
               setMessage("");
             }}
@@ -388,20 +224,13 @@ function Register() {
           {/* ====================================================
               PASSWORD
           ==================================================== */}
-
-          <label>
-            Password
-          </label>
-
+          <label>Password</label>
           <input
             type="password"
             placeholder="Minimal 6 karakter"
             value={password}
             onChange={(e) => {
-              setPassword(
-                e.target.value
-              );
-
+              setPassword(e.target.value);
               setErrorMessage("");
               setMessage("");
             }}
@@ -414,55 +243,46 @@ function Register() {
           {/* ====================================================
               ERROR MESSAGE
           ==================================================== */}
-
           {errorMessage && (
-            <div className="error-message">
-              {errorMessage}
-            </div>
+            <div className="error-message">{errorMessage}</div>
           )}
 
           {/* ====================================================
               SUCCESS MESSAGE
           ==================================================== */}
+          <div className="register-success">
+  <div className="register-success-icon">
+    ✓
+  </div>
 
-          {message && (
-            <div className="success-message">
-              {message}
-            </div>
-          )}
+  <div className="register-success-content">
+    <h3>Registrasi Berhasil</h3>
 
+    <p>
+      Akun Anda sedang menunggu persetujuan admin
+      atau Silakan Hubungi 0895-2408-5083.
+    </p>
+  </div>
+</div>
           {/* ====================================================
               REGISTER BUTTON
           ==================================================== */}
-
           <button
             className="auth-button"
             type="submit"
             disabled={loading}
           >
-            {loading
-              ? "Mendaftarkan..."
-              : "REGISTER"}
+            {loading ? "Mendaftarkan..." : "REGISTER"}
           </button>
-
         </form>
 
         {/* ======================================================
             LOGIN LINK
         ====================================================== */}
-
         <p className="auth-bottom">
-
-          Sudah punya akun?{" "}
-
-          <Link to="/login">
-            Login
-          </Link>
-
+          Sudah punya akun? <Link to="/login">Login</Link>
         </p>
-
       </div>
-
     </div>
   );
 }
