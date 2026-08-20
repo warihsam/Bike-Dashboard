@@ -54,15 +54,16 @@ function Register() {
       console.log("NAMA:", cleanName);
       console.log("========================================");
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: cleanEmail,
-        password: password,
-        options: {
-          data: {
-            full_name: cleanName,
+      const { data: authData, error: authError } =
+        await supabase.auth.signUp({
+          email: cleanEmail,
+          password: password,
+          options: {
+            data: {
+              full_name: cleanName,
+            },
           },
-        },
-      });
+        });
 
       // ========================================================
       // AUTH ERROR
@@ -80,7 +81,9 @@ function Register() {
       const user = authData?.user;
 
       if (!user) {
-        throw new Error("Registrasi gagal. User tidak berhasil dibuat.");
+        throw new Error(
+          "Registrasi gagal. User tidak berhasil dibuat."
+        );
       }
 
       console.log("AUTH USER BERHASIL:", user);
@@ -101,11 +104,13 @@ function Register() {
 
       console.log("PROFILE DATA:", profileData);
 
-      // Lakukan upsert tanpa memanggil .select().single() secara bersamaan 
-      // untuk menghindari kegagalan policy SELECT pada RLS
+      // Upsert tanpa .select().single()
+      // untuk menghindari masalah policy SELECT RLS
       const { error: profileError } = await supabase
         .from("profiles")
-        .upsert(profileData, { onConflict: "id" });
+        .upsert(profileData, {
+          onConflict: "id",
+        });
 
       // ========================================================
       // PROFILE ERROR
@@ -113,7 +118,7 @@ function Register() {
 
       if (profileError) {
         console.error("========================================");
-        console.error("PROFILE INSERT ERROR", profileError);
+        console.error("PROFILE INSERT ERROR:", profileError);
         console.error("========================================");
 
         throw new Error(
@@ -129,7 +134,10 @@ function Register() {
 
       if (authData?.session) {
         console.log("SESSION TERBENTUK.");
-        console.log("USER AKAN DI-LOGOUT KARENA MENUNGGU APPROVAL ADMIN.");
+        console.log(
+          "USER AKAN DI-LOGOUT KARENA MENUNGGU APPROVAL ADMIN."
+        );
+
         await supabase.auth.signOut();
       }
 
@@ -144,18 +152,29 @@ function Register() {
       // ========================================================
       // PESAN SUKSES
       // ========================================================
+      // HANYA DIJALANKAN SETELAH SEMUA PROSES BERHASIL
 
       setMessage(
-        "Registrasi berhasil. Akun Anda sedang menunggu persetujuan admin. Silakan tunggu sampai akun disetujui sebelum login."
+        "Registrasi berhasil. Akun Anda sedang menunggu persetujuan admin."
       );
+
+      console.log("========================================");
+      console.log("REGISTRASI BERHASIL");
+      console.log("STATUS: PENDING");
+      console.log("MENUNGGU APPROVAL ADMIN");
+      console.log("========================================");
     } catch (error) {
       console.error("========================================");
-      console.error("REGISTER ERROR", error);
+      console.error("REGISTER ERROR:", error);
       console.error("========================================");
 
       setErrorMessage(
-        error?.message || "Registrasi gagal. Silakan coba lagi."
+        error?.message ||
+          "Registrasi gagal. Silakan coba lagi."
       );
+
+      // Pastikan pesan sukses tidak muncul jika terjadi error
+      setMessage("");
     } finally {
       setLoading(false);
     }
@@ -168,27 +187,40 @@ function Register() {
   return (
     <div className="auth-page">
       <div className="auth-card">
+
         {/* ======================================================
             LOGO
         ====================================================== */}
+
         <div className="auth-logo">
-          <img src="/imagess.png" alt="Auth Logo" />
+          <img
+            src="/imagess.png"
+            alt="Auth Logo"
+          />
         </div>
 
         {/* ======================================================
             TITLE
         ====================================================== */}
+
         <h1>Buat Akun</h1>
-        <p className="subtitle">Daftar untuk mengakses Bike Dashboard</p>
+
+        <p className="subtitle">
+          Daftar untuk mengakses Bike Dashboard
+        </p>
 
         {/* ======================================================
             FORM
         ====================================================== */}
+
         <form onSubmit={handleRegister}>
+
           {/* ====================================================
               NAMA LENGKAP
           ==================================================== */}
+
           <label>Nama Lengkap</label>
+
           <input
             type="text"
             placeholder="Nama lengkap"
@@ -206,7 +238,9 @@ function Register() {
           {/* ====================================================
               EMAIL
           ==================================================== */}
+
           <label>Email</label>
+
           <input
             type="email"
             placeholder="email@example.com"
@@ -224,7 +258,9 @@ function Register() {
           {/* ====================================================
               PASSWORD
           ==================================================== */}
+
           <label>Password</label>
+
           <input
             type="password"
             placeholder="Minimal 6 karakter"
@@ -243,45 +279,68 @@ function Register() {
           {/* ====================================================
               ERROR MESSAGE
           ==================================================== */}
+
           {errorMessage && (
-            <div className="error-message">{errorMessage}</div>
+            <div className="error-message">
+              {errorMessage}
+            </div>
           )}
 
           {/* ====================================================
               SUCCESS MESSAGE
+              HANYA MUNCUL SETELAH REGISTRASI BERHASIL
           ==================================================== */}
-          <div className="register-success">
-  <div className="register-success-icon">
-    ✓
-  </div>
 
-  <div className="register-success-content">
-    <h3>Registrasi Berhasil</h3>
+          {message && (
+            <div className="register-success">
 
-    <p>
-      Akun Anda sedang menunggu persetujuan admin
-      atau Silakan Hubungi 0895-2408-5083.
-    </p>
-  </div>
-</div>
+              <div className="register-success-icon">
+                ✓
+              </div>
+
+              <div className="register-success-content">
+
+                <h3>
+                  Registrasi Berhasil
+                </h3>
+
+                <p>
+                  Akun Anda sedang menunggu persetujuan admin
+                  atau silakan hubungi 0895-2408-5083.
+                </p>
+
+              </div>
+
+            </div>
+          )}
+
           {/* ====================================================
               REGISTER BUTTON
           ==================================================== */}
+
           <button
             className="auth-button"
             type="submit"
             disabled={loading}
           >
-            {loading ? "Mendaftarkan..." : "REGISTER"}
+            {loading
+              ? "Mendaftarkan..."
+              : "REGISTER"}
           </button>
+
         </form>
 
         {/* ======================================================
             LOGIN LINK
         ====================================================== */}
+
         <p className="auth-bottom">
-          Sudah punya akun? <Link to="/login">Login</Link>
+          Sudah punya akun?{" "}
+          <Link to="/login">
+            Login
+          </Link>
         </p>
+
       </div>
     </div>
   );
