@@ -1,118 +1,323 @@
+/* =========================================================
+   NAVBAR
+   LIGHT / DARK MODERN THEME
+========================================================= */
+
 .navbar {
+  position: relative;
+  z-index: 1000;
+
   width: 100%;
-
-  min-height: 76px;
-
-  padding: 0 32px;
+  min-height: 78px;
 
   display: flex;
   align-items: center;
   justify-content: space-between;
 
-  background: #20252b;
+  gap: 24px;
 
-  border-bottom: 1px solid #343b43;
+  padding: 10px 28px;
+
+  border-bottom: 1px solid var(--dash-border, #e5e7eb);
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--dash-bg-card, #ffffff),
+      var(--dash-bg-main-2, #ffffff)
+    );
+
+  color: var(--dash-text-main, #ffffff);
 
   box-shadow:
-    0 4px 20px rgba(0, 0, 0, 0.25);
+    0 6px 25px rgba(15, 23, 42, 0.055);
 
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  transition:
+    background 0.25s ease,
+    border-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease;
 }
+
+
+/* =========================================================
+   LEFT
+========================================================= */
 
 .navbar-left {
   display: flex;
   align-items: center;
-  gap: 14px;
+
+  min-width: 0;
+
+  gap: 13px;
+
+  flex: 0 1 auto;
 }
 
+
+/* =========================================================
+   MAIN NAVBAR LOGO
+========================================================= */
+
 .navbar-logo {
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
+
+  flex: 0 0 48px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: #fefefe;
+  overflow: hidden;
 
-  border-radius: 12px;
+  border: 1px solid var(--dash-border, #e5e7eb);
 
-  font-size: 24px;
+  border-radius: 13px;
+
+  background:
+    var(--dash-bg-card-soft, #f8fafc);
 
   box-shadow:
-    0 5px 18px rgba(33, 150, 243, 0.25);
+    0 4px 14px rgb(204, 209, 219);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
 }
 
-.navbar-left h2 {
-  margin: 0;
+.navbar-logo:hover {
+  transform: translateY(-1px);
 
-  color: #ffffff;
-
-  font-size: 17px;
-
-  font-weight: 700;
-
-  letter-spacing: 0.5px;
+  border-color:
+    rgba(225, 29, 20, 0.28);
 }
 
-.navbar-left span {
+.navbar-logo img {
   display: block;
 
-  margin-top: 3px;
+  width: 100%;
+  height: 100%;
 
-  color: #89939e;
-
-  font-size: 12px;
+  object-fit: contain;
 }
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.navbar-brand {
+  min-width: 0;
+}
+
+.navbar-brand h2 {
+  margin: 0;
+
+  color:
+    var(--dash-text-heading, #151a20);
+
+  font-size: 16px;
+  line-height: 1.15;
+
+  font-weight: 900;
+
+  letter-spacing:
+    -0.025em;
+}
+
+.navbar-brand span {
+  display: block;
+
+  margin-top: 4px;
+
+  color:
+    var(--dash-text-secondary, #6b7280);
+
+  font-size: 10px;
+
+  line-height: 1.2;
+
+  font-weight: 600;
+
+  letter-spacing: 0.01em;
+}
+
+
+/* =========================================================
+   PARTNER LOGOS CONTAINER
+========================================================= */
+
+.navbar-partners {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 20px;
+
+  min-width: 0;
+
+  margin-left: auto;
+  margin-right: auto;
+
+  padding: 0 10px;
+}
+
+
+/* =========================================================
+   PARTNER LOGO
+========================================================= */
+
+.navbar-partner {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  overflow: hidden;
+
+  background: transparent;
+
+  transition:
+    transform 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.navbar-partner:hover {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.navbar-partner img {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  background:fixed;
+
+  opacity: 0.96;
+
+  transition:
+    opacity 0.2s ease,
+    filter 0.2s ease;
+}
+
+.navbar-partner:hover img {
+  opacity: 1;
+}
+
+
+/* =========================================================
+   PT INKA
+========================================================= */
+
+.navbar-partner-inka {
+  width: 100px;
+  height: 72px;
+}
+
+
+/* =========================================================
+   SMKN 1 JENANGAN
+========================================================= */
+
+.navbar-partner-smkn {
+  width: 80px;
+  height: 60px;
+}
+
+
+/* =========================================================
+   RIGHT
+========================================================= */
 
 .navbar-right {
   display: flex;
   align-items: center;
 
-  gap: 20px;
+  gap: 14px;
+
+  flex: 0 0 auto;
 }
+
+
+/* =========================================================
+   USER
+========================================================= */
 
 .navbar-user {
   display: flex;
   align-items: center;
 
-  gap: 10px;
+  gap: 9px;
+
+  min-width: 0;
 }
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
 
 .user-avatar {
   width: 38px;
   height: 38px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 38px;
 
-  border-radius: 50%;
+  display: grid;
+  place-items: center;
 
-  background: #2196f3;
+  border:
+    1px solid rgba(225, 29, 20, 0.15);
 
-  color: white;
+  border-radius: 11px;
 
-  font-weight: 700;
-}
+  background:
+    var(--dash-accent-soft, #fef2f2);
 
-.user-info {
-  display: flex;
-  flex-direction: column;
-
-  gap: 2px;
-}
-
-.user-info strong {
-  color: #ffffff;
+  color:
+    var(--dash-accent, #e11d14);
 
   font-size: 13px;
 
-  max-width: 220px;
+  font-weight: 900;
+}
+
+
+/* =========================================================
+   USER INFO
+========================================================= */
+
+.user-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.user-info strong {
+  display: block;
+
+  max-width: 160px;
 
   overflow: hidden;
+
+  color:
+    var(--dash-text-dark, #1f2937);
+
+  font-size: 11px;
+
+  font-weight: 800;
+
+  line-height: 1.25;
 
   text-overflow: ellipsis;
 
@@ -120,59 +325,414 @@
 }
 
 .user-info span {
-  color: #89939e;
+  display: block;
 
-  font-size: 11px;
-}
+  margin-top: 3px;
 
-.logout-button {
-  height: 38px;
+  color:
+    var(--dash-text-muted, #8a94a1);
 
-  padding: 0 16px;
-
-  border: 1px solid #414952;
-
-  border-radius: 7px;
-
-  background: #292f35;
-
-  color: #d9dee3;
-
-  font-size: 13px;
+  font-size: 9px;
 
   font-weight: 600;
 
+  line-height: 1.2;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout-button {
+  min-height: 36px;
+
+  padding: 0 13px;
+
+  border:
+    1px solid var(--dash-border, #e5e7eb);
+
+  border-radius: 9px;
+
+  background:
+    var(--dash-bg-card-soft, #f8fafc);
+
+  color:
+    var(--dash-text-secondary, #6b7280);
+
+  font-family: inherit;
+
+  font-size: 10px;
+
+  font-weight: 800;
+
   cursor: pointer;
 
-  transition: 0.2s;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .logout-button:hover {
-  background: #e53935;
+  border-color:
+    rgba(220, 38, 38, 0.25);
 
-  border-color: #e53935;
+  background:
+    var(--dash-danger-bg, #fef2f2);
 
-  color: white;
+  color:
+    var(--dash-danger, #dc2626);
+
+  transform:
+    translateY(-1px);
 }
 
-@media (max-width: 700px) {
+.logout-button:active {
+  transform:
+    translateY(0);
+}
+
+
+/* =========================================================
+   DARK MODE - NAVBAR LIGHTER
+========================================================= */
+
+:root[data-theme="dark"] .navbar {
+
+  /* lebih terang dari card dashboard */
+  background:
+    linear-gradient(
+      135deg,
+      #ff010154 100%
+    );
+
+  border-bottom-color: #323b46;
+
+  color: #f1f5f9;
+
+  box-shadow:
+    0 8px 30px rgba(0, 0, 0, 0.20),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.025);
+}
+
+
+/* =========================================================
+   DARK - MAIN LOGO
+========================================================= */
+
+:root[data-theme="dark"] .navbar-logo {
+
+  background: #fefefe;
+
+  border-color: #3a4551;
+
+  box-shadow:
+    0 5px 18px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+
+/* =========================================================
+   DARK - BRAND
+========================================================= */
+
+:root[data-theme="dark"] .navbar-brand h2 {
+
+  color: #f5f7fa;
+}
+
+:root[data-theme="dark"] .navbar-brand span {
+
+  color: #aeb8c3;
+}
+
+
+/* =========================================================
+   DARK - PARTNER LOGOS
+========================================================= */
+
+:root[data-theme="dark"] .navbar-partner img {
+
+  opacity: 1;
+
+  filter:
+    brightness(1.08)
+    contrast(1.03);
+}
+
+
+/* =========================================================
+   DARK - USER AVATAR
+========================================================= */
+
+:root[data-theme="dark"] .user-avatar {
+
+  border-color: rgba(255, 75, 69, 0.24);
+
+  background:
+    rgba(255, 75, 69, 0.12);
+
+  color: #ff6b66;
+}
+
+
+/* =========================================================
+   DARK - USER INFO
+========================================================= */
+
+:root[data-theme="dark"] .user-info strong {
+
+  color: #edf2f6;
+}
+
+:root[data-theme="dark"] .user-info span {
+
+  color: #9da8b4;
+}
+
+
+/* =========================================================
+   DARK - LOGOUT
+========================================================= */
+
+:root[data-theme="dark"] .logout-button {
+
+  border-color: #39434e;
+
+  background: #252d36;
+
+  color: #b9c2cc;
+}
+
+:root[data-theme="dark"] .logout-button:hover {
+
+  border-color: rgba(255, 90, 86, 0.35);
+
+  background:
+    rgba(255, 75, 69, 0.12);
+
+  color: #ff6b66;
+}
+
+/* =========================================================
+   FOCUS
+========================================================= */
+
+.logout-button:focus-visible {
+  outline:
+    2px solid var(--dash-accent);
+
+  outline-offset:
+    3px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1000px) {
+
   .navbar {
-    padding: 0 16px;
+    padding:
+      10px 20px;
+
+    gap: 16px;
   }
 
-  .navbar-left h2 {
-    font-size: 14px;
+  .navbar-partners {
+    gap: 12px;
   }
 
-  .navbar-left span {
-    display: none;
+  .navbar-partner-inka {
+    width: 70px;
+    height: 48px;
+  }
+
+  .navbar-partner-smkn {
+    width: 64px;
+    height: 48px;
   }
 
   .user-info {
     display: none;
   }
 
-  .navbar-right {
-    gap: 10px;
+}
+
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 750px) {
+
+  .navbar {
+    min-height: 70px;
+
+    padding:
+      9px 15px;
   }
+
+  .navbar-brand h2 {
+    font-size: 14px;
+  }
+
+  .navbar-brand span {
+    font-size: 8px;
+  }
+
+  .navbar-logo {
+    width: 43px;
+    height: 43px;
+
+    flex-basis: 43px;
+
+    border-radius: 11px;
+  }
+
+  .navbar-partners {
+    gap: 8px;
+
+    padding: 0 4px;
+  }
+
+  .navbar-partner-inka {
+    width: 58px;
+    height: 43px;
+  }
+
+  .navbar-partner-smkn {
+    width: 54px;
+    height: 43px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+  .navbar {
+    min-height: 64px;
+
+    padding:
+      8px 12px;
+
+    gap: 8px;
+  }
+
+  .navbar-left {
+    gap: 8px;
+  }
+
+  .navbar-logo {
+    width: 39px;
+    height: 39px;
+
+    flex-basis: 39px;
+
+    border-radius: 10px;
+  }
+
+  .navbar-brand h2 {
+    font-size: 12px;
+  }
+
+  .navbar-brand span {
+    display: none;
+  }
+
+  .navbar-partners {
+    gap: 5px;
+
+    margin-left: auto;
+    margin-right: 0;
+  }
+
+  .navbar-partner-inka {
+    width: 48px;
+    height: 36px;
+  }
+
+  .navbar-partner-smkn {
+    width: 46px;
+    height: 36px;
+  }
+
+  .navbar-user {
+    display: none;
+  }
+
+  .logout-button {
+    min-height: 34px;
+
+    padding:
+      0 9px;
+
+    font-size: 9px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 400px) {
+
+  .navbar {
+    padding:
+      7px 9px;
+  }
+
+  .navbar-logo {
+    width: 35px;
+    height: 35px;
+
+    flex-basis: 35px;
+  }
+
+  .navbar-brand h2 {
+    font-size: 11px;
+  }
+
+  .navbar-partner-inka {
+    width: 42px;
+    height: 32px;
+  }
+
+  .navbar-partner-smkn {
+    width: 40px;
+    height: 32px;
+  }
+
+  .logout-button {
+    padding:
+      0 7px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCE MOTION
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  .navbar,
+  .navbar-logo,
+  .navbar-partner,
+  .navbar-partner img,
+  .logout-button {
+    transition: none;
+  }
+
 }

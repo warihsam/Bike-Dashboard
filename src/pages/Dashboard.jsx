@@ -16,6 +16,7 @@ import Navbar from "../components/Navbar";
 import ComponentCard from "../components/ComponentCard";
 import ComponentDetailModal from "../components/ComponentDetailModal";
 
+
 import "./Dashboard.css";
 
 /* ============================================================
@@ -29,6 +30,12 @@ const BUCKET_NAME = "bike-components";
 ============================================================ */
 
 const AUTO_SYNC_INTERVAL = 3000;
+
+/* ============================================================
+   THEME
+============================================================ */
+
+const THEME_STORAGE_KEY = "bike-dashboard-theme";
 
 /* ============================================================
    COMPONENT TYPES
@@ -301,10 +308,6 @@ function getStorageCandidates(
 
   const candidates = [];
 
-  /* ----------------------------------------------------------
-     EXISTING FILES
-  ---------------------------------------------------------- */
-
   for (const file of storageFiles) {
     const fileName =
       typeof file === "string"
@@ -329,10 +332,6 @@ function getStorageCandidates(
     }
   }
 
-  /* ----------------------------------------------------------
-     FALLBACK EXTENSIONS
-  ---------------------------------------------------------- */
-
   for (
     const extension of IMAGE_EXTENSIONS
   ) {
@@ -340,10 +339,6 @@ function getStorageCandidates(
       `${expectedBaseName}${extension}`
     );
   }
-
-  /* ----------------------------------------------------------
-     REMOVE DUPLICATES
-  ---------------------------------------------------------- */
 
   const seen = new Set();
 
@@ -374,10 +369,6 @@ function getComponentImageSources(
 ) {
   const sources = [];
 
-  /* ----------------------------------------------------------
-     STORAGE
-  ---------------------------------------------------------- */
-
   const componentType =
     component?.component_type ||
     component?.komponen;
@@ -400,10 +391,6 @@ function getComponentImageSources(
     }
   }
 
-  /* ----------------------------------------------------------
-     DATABASE GIF URL
-  ---------------------------------------------------------- */
-
   const gifUrl =
     component?.gif_url;
 
@@ -420,10 +407,6 @@ function getComponentImageSources(
       }
     }
   }
-
-  /* ----------------------------------------------------------
-     DATABASE IMAGE URL
-  ---------------------------------------------------------- */
 
   const imageUrl =
     component?.image_url;
@@ -454,6 +437,35 @@ function getComponentImageSources(
 ============================================================ */
 
 export default function Dashboard() {
+  /* ==========================================================
+     THEME STATE
+  ========================================================== */
+
+  const [
+    theme,
+    setTheme,
+  ] = useState(() => {
+    try {
+      const savedTheme =
+        localStorage.getItem(
+          THEME_STORAGE_KEY
+        );
+
+      if (
+        savedTheme === "dark" ||
+        savedTheme === "light"
+      ) {
+        return savedTheme;
+      }
+    } catch (error) {
+      console.warn(
+        "THEME LOAD ERROR:",
+        error
+      );
+    }
+
+    return "light";
+  });
 
   /* ==========================================================
      DATABASE STATE
@@ -484,6 +496,15 @@ export default function Dashboard() {
   ] = useState(null);
 
   /* ==========================================================
+     SIDEBAR STATE
+  ========================================================== */
+
+  const [
+    sidebarOpen,
+    setSidebarOpen,
+  ] = useState(false);
+
+  /* ==========================================================
      STORAGE
   ========================================================== */
 
@@ -493,7 +514,7 @@ export default function Dashboard() {
   ] = useState([]);
 
   /* ==========================================================
-     SEARCH
+     SEARCH SIDEBAR
   ========================================================== */
 
   const [
@@ -534,10 +555,6 @@ export default function Dashboard() {
     setSyncType,
   ] = useState("");
 
-  /* ==========================================================
-     SYNC RESULT
-  ========================================================== */
-
   const [
     syncResult,
     setSyncResult,
@@ -554,11 +571,55 @@ export default function Dashboard() {
     useRef(true);
 
   /* ==========================================================
+     APPLY THEME
+  ========================================================== */
+
+  useEffect(() => {
+    const root =
+      document.documentElement;
+
+    root.setAttribute(
+      "data-theme",
+      theme
+    );
+
+    root.style.colorScheme =
+      theme;
+
+    try {
+      localStorage.setItem(
+        THEME_STORAGE_KEY,
+        theme
+      );
+    } catch (error) {
+      console.warn(
+        "THEME SAVE ERROR:",
+        error
+      );
+    }
+
+    return () => {
+      root.style.colorScheme = "";
+    };
+  }, [theme]);
+
+  /* ==========================================================
+     THEME TOGGLE
+  ========================================================== */
+
+  function toggleTheme() {
+    setTheme((currentTheme) =>
+      currentTheme === "dark"
+        ? "light"
+        : "dark"
+    );
+  }
+
+  /* ==========================================================
      INITIAL LOAD
   ========================================================== */
 
   useEffect(() => {
-
     mountedRef.current = true;
 
     loadData();
@@ -566,34 +627,45 @@ export default function Dashboard() {
     return () => {
       mountedRef.current = false;
     };
-
   }, []);
+
+  /* ==========================================================
+     BODY LOCK - SIDEBAR
+  ========================================================== */
+
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.classList.add(
+        "sidebar-open"
+      );
+    } else {
+      document.body.classList.remove(
+        "sidebar-open"
+      );
+    }
+
+    return () => {
+      document.body.classList.remove(
+        "sidebar-open"
+      );
+    };
+  }, [sidebarOpen]);
 
   /* ==========================================================
      AUTO SYNC
   ========================================================== */
 
   useEffect(() => {
-
     let cancelled = false;
 
     async function runAutoSync() {
-
-      if (cancelled) {
-        return;
-      }
-
-      if (!mountedRef.current) {
-        return;
-      }
+      if (cancelled) return;
+      if (!mountedRef.current) return;
 
       if (autoSyncingRef.current) {
         return;
       }
 
-      /*
-       * Jangan ganggu manual sync.
-       */
       if (syncing) {
         return;
       }
@@ -601,7 +673,6 @@ export default function Dashboard() {
       autoSyncingRef.current = true;
 
       try {
-
         console.log(
           "========================================"
         );
@@ -617,7 +688,6 @@ export default function Dashboard() {
         const result =
           await syncSpreadsheet({
             direction: "both",
-
             tables: [
               "bicycles",
               "components",
@@ -642,55 +712,34 @@ export default function Dashboard() {
           return;
         }
 
-        /*
-         * Setelah Google Sheet → Supabase selesai,
-         * ambil data terbaru.
-         */
         if (
           mountedRef.current &&
           !cancelled
         ) {
           await loadData();
         }
-
       } catch (error) {
-
         console.error(
           "AUTO SYNC ERROR:",
           error
         );
-
       } finally {
-
         autoSyncingRef.current =
           false;
-
       }
     }
 
-    /*
-     * Jangan langsung sync bersamaan dengan
-     * initial load.
-     */
     const initialTimer =
       setTimeout(() => {
-
         runAutoSync();
-
       }, 1000);
 
-    /*
-     * AUTO SYNC SETIAP 3 DETIK
-     */
     const interval =
       setInterval(() => {
-
         runAutoSync();
-
       }, AUTO_SYNC_INTERVAL);
 
     return () => {
-
       cancelled = true;
 
       clearTimeout(
@@ -700,27 +749,21 @@ export default function Dashboard() {
       clearInterval(
         interval
       );
-
     };
-
   }, [syncing]);
 
   /* ==========================================================
-     ESC MODAL
+     ESC
   ========================================================== */
 
   useEffect(() => {
-
     function handleKeyDown(event) {
-
       if (
         event.key === "Escape"
       ) {
-        setSelectedComponent(
-          null
-        );
+        setSelectedComponent(null);
+        setSidebarOpen(false);
       }
-
     }
 
     window.addEventListener(
@@ -729,46 +772,33 @@ export default function Dashboard() {
     );
 
     return () => {
-
       window.removeEventListener(
         "keydown",
         handleKeyDown
       );
-
     };
-
   }, []);
 
   /* ==========================================================
-     BODY LOCK
+     BODY LOCK - MODAL
   ========================================================== */
 
   useEffect(() => {
-
-    if (
-      selectedComponent
-    ) {
-
+    if (selectedComponent) {
       document.body.classList.add(
         "modal-open"
       );
-
     } else {
-
       document.body.classList.remove(
         "modal-open"
       );
-
     }
 
     return () => {
-
       document.body.classList.remove(
         "modal-open"
       );
-
     };
-
   }, [
     selectedComponent,
   ]);
@@ -778,7 +808,6 @@ export default function Dashboard() {
   ========================================================== */
 
   async function handleSync() {
-
     if (
       syncing ||
       autoSyncingRef.current
@@ -792,7 +821,6 @@ export default function Dashboard() {
     setSyncResult(null);
 
     try {
-
       console.log(
         "========================================"
       );
@@ -804,10 +832,6 @@ export default function Dashboard() {
       console.log(
         "========================================"
       );
-
-      /* ------------------------------------------------------
-         CHECK SERVICE
-      ------------------------------------------------------ */
 
       const serviceStatus =
         await checkSyncService();
@@ -827,14 +851,9 @@ export default function Dashboard() {
         );
       }
 
-      /* ------------------------------------------------------
-         EXECUTE SYNC
-      ------------------------------------------------------ */
-
       const result =
         await syncSpreadsheet({
           direction: "both",
-
           tables: [
             "bicycles",
             "components",
@@ -857,45 +876,30 @@ export default function Dashboard() {
         );
       }
 
-      setSyncResult(
-        result
-      );
+      setSyncResult(result);
 
-      setSyncType(
-        "success"
-      );
+      setSyncType("success");
 
       setSyncMessage(
         result?.message ||
           "Sinkronisasi Google Spreadsheet ke Supabase berhasil."
       );
 
-      /* ------------------------------------------------------
-         REFRESH DATABASE
-      ------------------------------------------------------ */
-
       await loadData();
-
     } catch (error) {
-
       console.error(
         "SYNC ERROR:",
         error
       );
 
-      setSyncType(
-        "error"
-      );
+      setSyncType("error");
 
       setSyncMessage(
         error?.message ||
           "Gagal melakukan sinkronisasi Google Spreadsheet."
       );
-
     } finally {
-
       setSyncing(false);
-
     }
   }
 
@@ -904,9 +908,7 @@ export default function Dashboard() {
   ========================================================== */
 
   async function loadStorageFiles() {
-
     try {
-
       const allFiles = [];
 
       let offset = 0;
@@ -914,7 +916,6 @@ export default function Dashboard() {
       const limit = 100;
 
       while (true) {
-
         const {
           data,
           error,
@@ -936,7 +937,6 @@ export default function Dashboard() {
             );
 
         if (error) {
-
           console.error(
             "STORAGE ERROR:",
             error
@@ -968,11 +968,9 @@ export default function Dashboard() {
       if (
         mountedRef.current
       ) {
-
         setStorageFiles(
           allFiles
         );
-
       }
 
       console.log(
@@ -981,9 +979,7 @@ export default function Dashboard() {
       );
 
       return allFiles;
-
     } catch (error) {
-
       console.error(
         "LOAD STORAGE ERROR:",
         error
@@ -992,17 +988,11 @@ export default function Dashboard() {
       if (
         mountedRef.current
       ) {
-
-        setStorageFiles(
-          []
-        );
-
+        setStorageFiles([]);
       }
 
       return [];
-
     }
-
   }
 
   /* ==========================================================
@@ -1010,13 +1000,7 @@ export default function Dashboard() {
   ========================================================== */
 
   async function loadData() {
-
-    /*
-     * Jangan menjalankan loadData terlalu banyak
-     * secara bersamaan.
-     */
     try {
-
       setLoadError(null);
 
       const [
@@ -1024,7 +1008,6 @@ export default function Dashboard() {
         componentResult,
       ] =
         await Promise.all([
-
           supabase
             .from("bicycles")
             .select("*")
@@ -1050,22 +1033,13 @@ export default function Dashboard() {
                 ascending: true,
               }
             ),
-
         ]);
-
-      /* --------------------------------------------------------
-         BICYCLE ERROR
-      -------------------------------------------------------- */
 
       if (
         bicycleResult.error
       ) {
         throw bicycleResult.error;
       }
-
-      /* --------------------------------------------------------
-         COMPONENT ERROR
-      -------------------------------------------------------- */
 
       if (
         componentResult.error
@@ -1103,25 +1077,15 @@ export default function Dashboard() {
         return;
       }
 
-      setBicycles(
-        bikes
-      );
+      setBicycles(bikes);
 
-      setComponents(
-        comps
-      );
-
-      /* --------------------------------------------------------
-         SELECTED BIKE
-      -------------------------------------------------------- */
+      setComponents(comps);
 
       if (
         bikes.length > 0
       ) {
-
         setSelectedBike(
           (current) => {
-
             if (
               current &&
               bikes.some(
@@ -1134,7 +1098,6 @@ export default function Dashboard() {
                   )
               )
             ) {
-
               return bikes.find(
                 (bike) =>
                   String(
@@ -1144,30 +1107,17 @@ export default function Dashboard() {
                     current.id
                   )
               );
-
             }
 
             return bikes[0];
-
           }
         );
-
       } else {
-
-        setSelectedBike(
-          null
-        );
-
+        setSelectedBike(null);
       }
 
-      /* --------------------------------------------------------
-         STORAGE
-      -------------------------------------------------------- */
-
       await loadStorageFiles();
-
     } catch (error) {
-
       console.error(
         "DASHBOARD LOAD ERROR:",
         error
@@ -1176,42 +1126,25 @@ export default function Dashboard() {
       if (
         mountedRef.current
       ) {
-
         setLoadError(
           error?.message ||
             "Data dashboard gagal dimuat."
         );
 
-        setBicycles(
-          []
-        );
+        setBicycles([]);
 
-        setComponents(
-          []
-        );
+        setComponents([]);
 
-        setStorageFiles(
-          []
-        );
+        setStorageFiles([]);
 
-        setSelectedBike(
-          null
-        );
-
+        setSelectedBike(null);
       }
-
     } finally {
-
       if (
         mountedRef.current
       ) {
-
-        setLoading(
-          false
-        );
-
+        setLoading(false);
       }
-
     }
   }
 
@@ -1222,17 +1155,13 @@ export default function Dashboard() {
   function getBikeComponents(
     bikeId
   ) {
-
     return components.filter(
       (component) =>
         String(
           component.bicycle_id
         ) ===
-        String(
-          bikeId
-        )
+        String(bikeId)
     );
-
   }
 
   /* ==========================================================
@@ -1243,10 +1172,8 @@ export default function Dashboard() {
     bikeId,
     type
   ) {
-
     return components.find(
       (component) => {
-
         const componentType =
           component.component_type ??
           component.komponen ??
@@ -1256,10 +1183,7 @@ export default function Dashboard() {
           String(
             component.bicycle_id
           ) ===
-            String(
-              bikeId
-            ) &&
-
+            String(bikeId) &&
           String(
             componentType
           )
@@ -1269,20 +1193,17 @@ export default function Dashboard() {
               .trim()
               .toUpperCase()
         );
-
       }
     );
-
   }
 
   /* ==========================================================
-     SEARCH
+     SIDEBAR SEARCH
   ========================================================== */
 
   const filteredBicycles =
     useMemo(
       () => {
-
         const keyword =
           search
             .trim()
@@ -1294,21 +1215,13 @@ export default function Dashboard() {
 
         return bicycles.filter(
           (bike) => {
-
             const values = [
-
               bike.bicycleset,
-
               bike.no_unit,
-
               bike.bike_brand,
-
               bike.bike_model,
-
               bike.status_sepeda,
-
               bike.status,
-
             ];
 
             return values
@@ -1325,10 +1238,8 @@ export default function Dashboard() {
                       keyword
                     )
               );
-
           }
         );
-
       },
       [
         bicycles,
@@ -1341,10 +1252,11 @@ export default function Dashboard() {
   ========================================================== */
 
   if (loading) {
-
     return (
-      <div className="dashboard-page">
-
+      <div
+        className="dashboard-page"
+        data-theme={theme}
+      >
         <Navbar />
 
         <main className="dashboard-container">
@@ -1365,10 +1277,8 @@ export default function Dashboard() {
           </div>
 
         </main>
-
       </div>
     );
-
   }
 
   /* ==========================================================
@@ -1376,8 +1286,10 @@ export default function Dashboard() {
   ========================================================== */
 
   return (
-
-    <div className="dashboard-page">
+    <div
+      className={`dashboard-page theme-${theme}`}
+      data-theme={theme}
+    >
 
       <Navbar />
 
@@ -1388,6 +1300,35 @@ export default function Dashboard() {
         ==================================================== */}
 
         <section className="dashboard-header">
+
+          
+          {/* ==================================================
+              SIDEBAR TOGGLE
+          ================================================== */}
+
+          <button
+            type="button"
+            className={`bike-sidebar-toggle ${
+              sidebarOpen
+                ? "is-open"
+                : ""
+            }`}
+            onClick={() =>
+              setSidebarOpen(
+                (value) => !value
+              )
+            }
+            aria-label={
+              sidebarOpen
+                ? "Tutup daftar sepeda"
+                : "Buka daftar sepeda"
+            }
+            aria-expanded={
+              sidebarOpen
+            }
+          >
+            <span />
+          </button>
 
           <div className="dashboard-heading">
 
@@ -1402,18 +1343,52 @@ export default function Dashboard() {
               </span>
             </h1>
 
-            <p className="dashboard-description">
-              Data sepeda dan seluruh
-              komponen tersimpan di
-              Supabase.
-            </p>
-
           </div>
 
           <div className="dashboard-header-actions">
 
             {/* ==================================================
-                SYNC BUTTON
+                THEME TOGGLE
+            ================================================== */}
+
+            <button
+              type="button"
+              className={`theme-toggle ${
+                theme === "dark"
+                  ? "is-dark"
+                  : "is-light"
+              }`}
+              onClick={
+                toggleTheme
+              }
+              aria-label={
+                theme === "dark"
+                  ? "Aktifkan tema terang"
+                  : "Aktifkan tema gelap"
+              }
+              title={
+                theme === "dark"
+                  ? "Light Mode"
+                  : "Dark Mode"
+              }
+            >
+
+              <span className="theme-toggle-icon">
+                {theme === "dark"
+                  ? "☀"
+                  : "☾"}
+              </span>
+
+              <span className="theme-toggle-label">
+                {theme === "dark"
+                  ? "LIGHT"
+                  : "DARK"}
+              </span>
+
+            </button>
+
+            {/* ==================================================
+                SYNC
             ================================================== */}
 
             <button
@@ -1430,31 +1405,29 @@ export default function Dashboard() {
                 syncing ||
                 autoSyncingRef.current
               }
-            >
-
-            </button>
-
-            {/* ==================================================
-                BIKE COUNT
-            ================================================== */}
-
-            <div className="bike-count">
-
-              <strong>
-                {
-                  bicycles.length
-                }
-              </strong>
-
-              <span>
-                Unit Sepeda
-              </span>
-
-            </div>
+              aria-label="Sinkronisasi data"
+              title="Sinkronisasi data"
+            />
 
           </div>
 
         </section>
+
+        {/* ====================================================
+            SIDEBAR OVERLAY
+        ==================================================== */}
+
+        <div
+          className={`bike-sidebar-overlay ${
+            sidebarOpen
+              ? "is-open"
+              : ""
+          }`}
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+          aria-hidden="true"
+        />
 
         {/* ====================================================
             AUTO SYNC STATUS
@@ -1467,7 +1440,7 @@ export default function Dashboard() {
             gap: "8px",
             marginBottom: "16px",
             fontSize: "12px",
-            opacity: 0.65,
+            opacity: 0.7,
           }}
         >
 
@@ -1476,8 +1449,7 @@ export default function Dashboard() {
               width: "7px",
               height: "7px",
               borderRadius: "50%",
-              background:
-                "#22c55e",
+              background: "#00ff5e",
               display: "inline-block",
             }}
           />
@@ -1493,7 +1465,6 @@ export default function Dashboard() {
         ==================================================== */}
 
         {syncMessage && (
-
           <div
             className={`sync-message ${
               syncType ===
@@ -1504,97 +1475,67 @@ export default function Dashboard() {
           >
 
             <span className="sync-message-icon">
-
               {syncType ===
               "success"
                 ? "✓"
                 : "!"}
-
             </span>
 
             <div>
 
               <strong>
-
                 {syncType ===
                 "success"
                   ? "Sinkronisasi berhasil"
                   : "Sinkronisasi gagal"}
-
               </strong>
 
               <p>
-                {
-                  syncMessage
-                }
+                {syncMessage}
               </p>
-
-              {/* =================================================
-                  SYNC DETAIL
-              ================================================= */}
 
               {syncType ===
                 "success" &&
                 syncResult && (
-
                   <div className="sync-result">
 
                     <span>
-                      +{" "}
-                      {
-                        syncResult.insertedBicycles ??
-                        0
-                      }{" "}
-                      sepeda
+                      +
+                      {syncResult.insertedBicycles ?? 0}
+                      {" "}sepeda
                     </span>
 
                     <span>
-                      ↻{" "}
-                      {
-                        syncResult.updatedBicycles ??
-                        0
-                      }{" "}
-                      sepeda
+                      ↻
+                      {syncResult.updatedBicycles ?? 0}
+                      {" "}sepeda
                     </span>
 
                     <span>
-                      −{" "}
-                      {
-                        syncResult.deletedBicycles ??
-                        0
-                      }{" "}
-                      sepeda
+                      −
+                      {syncResult.deletedBicycles ?? 0}
+                      {" "}sepeda
                     </span>
 
                     <span>
-                      +{" "}
-                      {
-                        syncResult.insertedComponents ??
-                        0
-                      }{" "}
-                      komponen
+                      +
+                      {syncResult.insertedComponents ?? 0}
+                      {" "}komponen
                     </span>
 
                     <span>
-                      ↻{" "}
-                      {
-                        syncResult.updatedComponents ??
-                        0
-                      }{" "}
-                      komponen
+                      ↻
+                      {syncResult.updatedComponents ?? 0}
+                      {" "}komponen
                     </span>
 
                     <span>
-                      −{" "}
-                      {
-                        syncResult.deletedComponents ??
-                        0
-                      }{" "}
-                      komponen
+                      −
+                      {syncResult.deletedComponents ?? 0}
+                      {" "}komponen
                     </span>
 
                   </div>
-
                 )}
 
             </div>
@@ -1602,19 +1543,9 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={() => {
-
-                setSyncMessage(
-                  ""
-                );
-
-                setSyncType(
-                  ""
-                );
-
-                setSyncResult(
-                  null
-                );
-
+                setSyncMessage("");
+                setSyncType("");
+                setSyncResult(null);
               }}
               aria-label="Tutup pesan"
             >
@@ -1622,7 +1553,6 @@ export default function Dashboard() {
             </button>
 
           </div>
-
         )}
 
         {/* ====================================================
@@ -1630,7 +1560,6 @@ export default function Dashboard() {
         ==================================================== */}
 
         {loadError && (
-
           <div className="dashboard-error">
 
             <div className="error-icon">
@@ -1644,9 +1573,7 @@ export default function Dashboard() {
               </strong>
 
               <p>
-                {
-                  loadError
-                }
+                {loadError}
               </p>
 
             </div>
@@ -1661,64 +1588,20 @@ export default function Dashboard() {
             </button>
 
           </div>
-
         )}
 
         {/* ====================================================
-            SEARCH
+            BIKE SIDEBAR
         ==================================================== */}
 
         {bicycles.length > 0 && (
-
-          <section className="dashboard-search">
-
-            <div className="search-box">
-
-              <span className="search-icon">
-                ⌕
-              </span>
-
-              <input
-                type="text"
-                value={search}
-                onChange={(
-                  event
-                ) =>
-                  setSearch(
-                    event.target.value
-                  )
-                }
-                placeholder="Cari nomor unit, merek, model, atau bike set..."
-              />
-
-              {search && (
-
-                <button
-                  type="button"
-                  className="search-clear"
-                  onClick={() =>
-                    setSearch("")
-                  }
-                  aria-label="Hapus pencarian"
-                >
-                  ×
-                </button>
-
-              )}
-
-            </div>
-
-          </section>
-
-        )}
-
-        {/* ====================================================
-            BIKE LIST
-        ==================================================== */}
-
-        {bicycles.length > 0 && (
-
-          <section className="bike-selector">
+          <section
+            className={`bike-selector ${
+              sidebarOpen
+                ? "is-open"
+                : ""
+            }`}
+          >
 
             <div className="section-title">
 
@@ -1742,19 +1625,56 @@ export default function Dashboard() {
 
               <span className="data-count">
 
-                {
-                  filteredBicycles.length
-                }
+                {filteredBicycles.length}
 
                 {" "}dari{" "}
 
-                {
-                  bicycles.length
-                }
+                {bicycles.length}
 
                 {" "}unit
 
               </span>
+
+            </div>
+
+            {/* ==================================================
+                SEARCH
+            ================================================== */}
+
+            <div className="dashboard-search sidebar-search">
+
+              <div className="search-box">
+
+                <span className="search-icon">
+                  ⌕
+                </span>
+
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(event) =>
+                    setSearch(
+                      event.target.value
+                    )
+                  }
+                  placeholder="Cari unit, merek, model..."
+                  aria-label="Cari sepeda"
+                />
+
+                {search && (
+                  <button
+                    type="button"
+                    className="search-clear"
+                    onClick={() =>
+                      setSearch("")
+                    }
+                    aria-label="Hapus pencarian"
+                  >
+                    ×
+                  </button>
+                )}
+
+              </div>
 
             </div>
 
@@ -1817,7 +1737,6 @@ export default function Dashboard() {
                       );
 
                     return (
-
                       <button
                         type="button"
                         key={
@@ -1828,35 +1747,34 @@ export default function Dashboard() {
                             ? "bike-card active"
                             : "bike-card"
                         }
-                        onClick={() =>
+                        onClick={() => {
+
                           setSelectedBike(
                             bike
-                          )
-                        }
+                          );
+
+                          setSidebarOpen(
+                            false
+                          );
+
+                        }}
                       >
 
                         <div className="bike-card-number">
-
-                          {
-                            displayValue(
-                              bike.bicycleset
-                            )
-                          }
-
+                          {displayValue(
+                            bike.bicycleset
+                          )}
                         </div>
 
                         <div className="bike-card-info">
 
                           <strong>
-                            {
-                              displayValue(
-                                bike.no_unit
-                              )
-                            }
+                            {displayValue(
+                              bike.no_unit
+                            )}
                           </strong>
 
                           <span>
-
                             {[
                               bike.bike_brand,
                               bike.bike_model,
@@ -1864,38 +1782,26 @@ export default function Dashboard() {
                               .filter(
                                 Boolean
                               )
-                              .join(
-                                " "
-                              )}
-
+                              .join(" ")}
                           </span>
 
                           {bikeStatus && (
-
                             <small
                               className={`bike-status-badge status-${normalizeStatus(
                                 bikeStatus
                               ).toLowerCase()}`}
                             >
-                              {
-                                getStatusLabel(
-                                  bikeStatus
-                                )
-                              }
+                              {getStatusLabel(
+                                bikeStatus
+                              )}
                             </small>
-
                           )}
 
                         </div>
 
                         <div className="bike-card-component-count">
-
-                          {
-                            bikeComponents.length
-                          }
-
+                          {bikeComponents.length}
                           {" "}komponen
-
                         </div>
 
                         <div className="bike-card-arrow">
@@ -1903,9 +1809,7 @@ export default function Dashboard() {
                         </div>
 
                       </button>
-
                     );
-
                   }
                 )
 
@@ -1914,7 +1818,6 @@ export default function Dashboard() {
             </div>
 
           </section>
-
         )}
 
         {/* ====================================================
@@ -1922,7 +1825,6 @@ export default function Dashboard() {
         ==================================================== */}
 
         {selectedBike && (
-
           <section className="bike-detail">
 
             {/* ==================================================
@@ -1934,18 +1836,13 @@ export default function Dashboard() {
               <div className="detail-heading">
 
                 <span className="detail-label">
-
-                  {
-                    displayValue(
-                      selectedBike.bicycleset,
-                      "BIKE"
-                    )
-                  }
-
+                  {displayValue(
+                    selectedBike.bicycleset,
+                    "BIKE"
+                  )}
                 </span>
 
                 <h2>
-
                   {[
                     selectedBike.bike_brand,
                     selectedBike.bike_model,
@@ -1953,26 +1850,16 @@ export default function Dashboard() {
                     .filter(
                       Boolean
                     )
-                    .join(
-                      " "
-                    )}
-
+                    .join(" ")}
                 </h2>
 
                 <p>
-
                   Nomor unit{" "}
-
                   <strong>
-
-                    {
-                      displayValue(
-                        selectedBike.no_unit
-                      )
-                    }
-
+                    {displayValue(
+                      selectedBike.no_unit
+                    )}
                   </strong>
-
                 </p>
 
               </div>
@@ -1980,13 +1867,8 @@ export default function Dashboard() {
               <div className="detail-header-right">
 
                 <div className="detail-id">
-
                   ID #
-
-                  {
-                    selectedBike.id
-                  }
-
+                  {selectedBike.id}
                 </div>
 
                 {getComponentField(
@@ -1994,7 +1876,6 @@ export default function Dashboard() {
                   "status_sepeda",
                   "status"
                 ) && (
-
                   <span
                     className={`bike-detail-status status-${normalizeStatus(
                       getComponentField(
@@ -2004,19 +1885,14 @@ export default function Dashboard() {
                       )
                     ).toLowerCase()}`}
                   >
-
-                    {
-                      getStatusLabel(
-                        getComponentField(
-                          selectedBike,
-                          "status_sepeda",
-                          "status"
-                        )
+                    {getStatusLabel(
+                      getComponentField(
+                        selectedBike,
+                        "status_sepeda",
+                        "status"
                       )
-                    }
-
+                    )}
                   </span>
-
                 )}
 
               </div>
@@ -2115,15 +1991,12 @@ export default function Dashboard() {
                 </div>
 
                 <span className="data-count">
-
                   {
                     getBikeComponents(
                       selectedBike.id
                     ).length
                   }
-
                   {" "}komponen
-
                 </span>
 
               </div>
@@ -2139,16 +2012,8 @@ export default function Dashboard() {
                         type
                       );
 
-                    /* ----------------------------------------
-                       COMPONENT BELUM ADA
-                    ---------------------------------------- */
-
-                    if (
-                      !component
-                    ) {
-
+                    if (!component) {
                       return (
-
                         <div
                           className="component-card empty"
                           key={type}
@@ -2157,11 +2022,7 @@ export default function Dashboard() {
                           <div className="component-top">
 
                             <span className="component-type">
-
-                              {
-                                type
-                              }
-
+                              {type}
                             </span>
 
                           </div>
@@ -2180,14 +2041,8 @@ export default function Dashboard() {
                           </div>
 
                         </div>
-
                       );
-
                     }
-
-                    /* ----------------------------------------
-                       IMAGE SOURCES
-                    ---------------------------------------- */
 
                     const imageSources =
                       getComponentImageSources(
@@ -2197,7 +2052,6 @@ export default function Dashboard() {
                       );
 
                     return (
-
                       <ComponentCard
                         key={
                           component.id ||
@@ -2218,9 +2072,7 @@ export default function Dashboard() {
                           )
                         }
                       />
-
                     );
-
                   }
                 )}
 
@@ -2229,7 +2081,6 @@ export default function Dashboard() {
             </div>
 
           </section>
-
         )}
 
         {/* ====================================================
@@ -2238,7 +2089,6 @@ export default function Dashboard() {
 
         {bicycles.length === 0 &&
           !loadError && (
-
             <div className="empty-dashboard">
 
               <div className="empty-dashboard-icon">
@@ -2264,7 +2114,6 @@ export default function Dashboard() {
               </button>
 
             </div>
-
           )}
 
       </main>
@@ -2274,7 +2123,6 @@ export default function Dashboard() {
       ====================================================== */}
 
       {selectedComponent && (
-
         <ComponentDetailModal
           component={
             selectedComponent
@@ -2295,7 +2143,6 @@ export default function Dashboard() {
             )
           }
         />
-
       )}
 
     </div>
@@ -2312,7 +2159,6 @@ function DetailMeta({
   status = false,
   date = false,
 }) {
-
   let display =
     displayValue(
       value
@@ -2329,42 +2175,28 @@ function DetailMeta({
   }
 
   return (
-
     <div className="bike-meta-item">
 
       <span>
-        {
-          label
-        }
+        {label}
       </span>
 
       {status ? (
-
         <strong
           className={`meta-status status-${normalizeStatus(
             value
           ).toLowerCase()}`}
         >
-
-          {
-            getStatusLabel(
-              value
-            )
-          }
-
+          {getStatusLabel(
+            value
+          )}
         </strong>
-
       ) : (
-
         <strong>
-          {
-            display
-          }
+          {display}
         </strong>
-
       )}
 
     </div>
-
   );
 }
